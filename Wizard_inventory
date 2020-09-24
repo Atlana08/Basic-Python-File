@@ -1,0 +1,99 @@
+#! /usr/bin/env python3
+
+/*
+This is a basic program that runs a little walking character and they can pick items up until their bag is full and it tracks their inventory
+*/
+import random
+
+def display_menu():
+    print("COMMAND MENU")
+    print("walk - Walk down the path")
+    print("show - Show all items")
+    print("drop - Drop an item")
+    print("exit - Exit program")
+    print()
+
+
+def walk():
+    with open("wizard_all_items.txt") as file:
+        items = []
+        count = 0
+        for line in file:
+            items.append(line)
+            count+=1
+        value = random.randint(0, count-1)
+        find = items[value]
+        print("While walking down a path, you see a " + find)
+        collect= input("Do you want to grab it? (y/n): ")
+        if collect.lower() == "y":
+            with open("wizards_inventory.txt") as file2:
+                count = 0
+                inventory = []
+                for line in file2:
+                    inventory.append(line)
+                    count += 1
+                if count < 4:
+                    inventory.append(find)
+                    take = items.pop(value)
+                    write_items("wizard_all_items.txt", items)
+                    write_items("wizards_inventory.txt", inventory)
+                    print("You pick up " +find)
+                else:
+                    print("You can't carry any more items. Drop something first.")
+                    print()
+
+
+
+def show():
+    with open("wizards_inventory.txt") as file:
+        count = 1
+        for line in file:
+            print(str(count) + ". " + line, end="")
+            count += 1
+    print()
+
+
+def drop():
+    number = int(input("Number: "))
+    with open("wizards_inventory.txt") as file:
+        inventory = []
+        for line in file:
+            inventory.append(line)
+        removing = inventory.pop(number -1)
+        print("You dropped "+ removing)
+        with open("wizard_all_items.txt") as file:
+            items = []
+            for line in file:
+                items.append(line)
+            items.append(removing)
+    write_items("wizards_inventory.txt", inventory)
+    write_items("wizard_all_items.txt", items)
+
+
+
+
+def write_items(file_name,items):
+    with open(file_name, "w") as file:
+        for item in items:
+            file.write(item)
+
+
+def main():
+    print()
+    display_menu()
+    while True:
+        command = input("Command: ")
+        if command.lower() == "walk":
+            walk()
+        elif command.lower() == "show":
+            show()
+        elif command.lower() == "drop":
+            drop()
+        elif command.lower() == "exit":
+            break
+    print("Bye!")
+
+
+
+if __name__ == "__main__":
+    main()
